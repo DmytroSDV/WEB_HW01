@@ -255,6 +255,7 @@ def main():
             pass
         book = AddressBook()
 
+
     # Deserialization notebook
     if note_database.exists() and note_database.is_file():
         with open(note_database, "rb") as fh:

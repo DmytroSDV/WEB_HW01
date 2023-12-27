@@ -1005,7 +1005,7 @@ class FileExtensionShow(BotCommands):
         print(f"{bcolors.BLUE}Video: {bcolors.RESET}", f"{bcolors.WARNING} {vid} {bcolors.RESET}")
         print(f"{bcolors.BLUE}Document: {bcolors.RESET}", f"{bcolors.WARNING} {doc} {bcolors.RESET}")
         print(f"{bcolors.BLUE}Audio: {bcolors.RESET}", f"{bcolors.WARNING} {aud} {bcolors.RESET}")
-        print(f"{bcolors.BLUE}Archive: {bcolors.RESET}", f"{bcolors.WARNING} {arch} {bcolors.RESET}")      
+        print(f"{bcolors.BLUE}Archive: {bcolors.RESET}", f"{bcolors.WARNING} {arch} {bcolors.RESET}\n")      
 
 class ShowAllCommands(BotCommands):
     def __init__(self, language:str = None, c_user: str = None):
