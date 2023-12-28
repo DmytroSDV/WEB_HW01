@@ -1,4 +1,4 @@
-from CODE_CRAFTERS_CORE.AvadaKedavra import shutdown_with_countdown
+from CODE_CRAFTERS_CORE.AvadaKedavra import AvadaKedavra
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.completion import WordCompleter
 from CODE_CRAFTERS_CORE.RecordData import bcolors
@@ -202,9 +202,10 @@ async def get_input():
 def timer_function():
     print(f"\n{bcolors.WARNING}⏰ Time's up! You didn't enter any command💀 {bcolors.RESET}")
     print(f"{bcolors.WARNING}😄 I'm offended, you're not using me, so I run the Awadakedabra command and I shut down you forever!💀 {bcolors.RESET}")
-    shutdown_with_countdown()
-
-def wait_for_input(timeout=120, timeout2=1000):
+    AvadaKedavra()()
+    
+    
+def wait_for_input(timeout=90, timeout2=500):
     global loop
     global timer_thread
     loop = asyncio.get_event_loop()
