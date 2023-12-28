@@ -1053,7 +1053,10 @@ class ShowOneCommands(BotCommands):
                     print(f"{com_list} {ex_com}\n")
         
 class CommandFactory:
-    def __init__(self):
+    def __init__(self, data: AddressBook, note: NoteBook):
+        self.data = data
+        self.note = note
+        self._full_list_command = {}
         self._general_commands = {}
         self._contact_commands = {}
         self._note_commands = {}
@@ -1061,6 +1064,10 @@ class CommandFactory:
         self.command_list_en()
         self.command_list_ru()
         self.command_list_ua()
+        self._full_list_command.update(self._general_commands)
+        self._full_list_command.update(self._contact_commands)
+        self._full_list_command.update(self._note_commands)
+        self._full_list_command.update(self._file_commands)
         
     def command_registration(self, section_type: str, command: str, command_type: BotCommands):
         if section_type == 'contact':
@@ -1075,12 +1082,12 @@ class CommandFactory:
         elif section_type == 'general':
             self._general_commands[command] = command_type
             
-    def command_execute(self, command: str, data: AddressBook | NoteBook = None, language: str = None, c_user: str = None):
+    def command_execute(self, command: str, language: str = None, c_user: str = None):
         if command in self._contact_commands:
-            return self._contact_commands[command](data)
+            return self._contact_commands[command](self.data)
         
         elif command in self._note_commands:
-            return self._note_commands[command](data)
+            return self._note_commands[command](self.note)
         
         elif command in self._file_commands:
             return self._file_commands[command]()

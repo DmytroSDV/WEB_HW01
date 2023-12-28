@@ -12,7 +12,6 @@ import asyncio
 import random
 from CODE_CRAFTERS_CORE.CommandFactory import *
 
-
 COLOR_COMMAND_GREEN = "bg:#ansigreen #ffffff"
 STYLE = Style.from_dict({"prompt": COLOR_COMMAND_GREEN})
 
@@ -204,7 +203,6 @@ def timer_function():
     print(f"{bcolors.WARNING}😄 I'm offended, you're not using me, so I run the Awadakedabra command and I shut down you forever!💀 {bcolors.RESET}")
     AvadaKedavra()()
     
-    
 def wait_for_input(timeout=90, timeout2=500):
     global loop
     global timer_thread
@@ -240,7 +238,7 @@ def main():
     file_database = Path(file_name)
     note_database = Path(note_name)
     
-    execute_command = CommandFactory()
+    
     # Deserialization adddressbook
     if file_database.exists() and file_database.is_file():
         with open(file_database, "rb") as fh:
@@ -270,7 +268,9 @@ def main():
         with open(note_database, "wb") as fh:
             pass
         note = NoteBook()
-
+    
+        
+    execute_command = CommandFactory(book, note)
     print(f"{bcolors.PINK}👋 Hello! My name is Bot Jul. Please choose the language and we will begin 🤖 {bcolors.RESET}")
 
     try:
@@ -286,24 +286,12 @@ def main():
                             language_flag = True
                             break
                         
-            user_input = wait_for_input()
+            user_input = wait_for_input()            
             execute_command.command_execute('one-command-info', language=language, c_user=user_input)
             
-            if user_input in execute_command._general_commands:
+            if user_input in execute_command._full_list_command:
                 execute_command.command_execute(user_input, language=language)
-                
-            elif user_input in ("change-language", "изменить язык", "зміти мову"):
-                language_flag = False
-                
-            elif user_input in execute_command._contact_commands:
-                execute_command.command_execute(user_input, book)
-                
-            elif user_input in execute_command._note_commands:
-                execute_command.command_execute(user_input, note)
-                
-            elif user_input in execute_command._file_commands:
-                execute_command.command_execute(user_input)
-                
+
             elif  user_input in ("quit", "exit", "q", "выход", "в", "до зустрічі", "д"):
                 print("Good bye!\n")
                 serialization = AddressBook()
@@ -354,7 +342,6 @@ def main():
         serialization.save_to_file(file_name, book)
         note_serialization = NoteBook()
         note_serialization.note_save_to_file(note_name, note)
-
 
 if __name__ == "__main__":
     try:
