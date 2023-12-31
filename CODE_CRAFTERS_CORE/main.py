@@ -12,8 +12,7 @@ import asyncio
 import random
 from CODE_CRAFTERS_CORE.CommandFactory import *
 
-COLOR_COMMAND_GREEN = "bg:#ansigreen #ffffff"
-STYLE = Style.from_dict({"prompt": COLOR_COMMAND_GREEN})
+STYLE = Style.from_dict({"prompt": "bg:#ansigreen #ffffff"})
 
 HI_COMMANDS_RU = [
     "🎩✨ Абракадабра! Введите волшебную команду:✍️  ",
@@ -203,7 +202,7 @@ def timer_function():
     print(f"{bcolors.WARNING}😄 I'm offended, you're not using me, so I run the Awadakedabra command and I shut down you forever!💀 {bcolors.RESET}")
     AvadaKedavra()()
     
-def wait_for_input(timeout=90, timeout2=500):
+def wait_for_input(timeout=120, timeout2=500):
     global loop
     global timer_thread
     loop = asyncio.get_event_loop()
@@ -291,7 +290,8 @@ def main():
             
             if user_input in execute_command._full_list_command:
                 execute_command.command_execute(user_input, language=language)
-
+            elif user_input == "change-language":
+                language_flag = False
             elif  user_input in ("quit", "exit", "q", "выход", "в", "до зустрічі", "д"):
                 print("Good bye!\n")
                 serialization = AddressBook()
