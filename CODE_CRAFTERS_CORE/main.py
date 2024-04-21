@@ -1,4 +1,5 @@
-from CODE_CRAFTERS_CORE.AvadaKedavra import AvadaKedavra
+from AvadaKedavrassss import AvadaKedavra
+# from AvadaKedavra import shutdown_with_countdown
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.completion import WordCompleter
 from CODE_CRAFTERS_CORE.RecordData import bcolors
@@ -7,7 +8,8 @@ from CODE_CRAFTERS_CORE.NoteFeature import *
 from prompt_toolkit import PromptSession
 from prompt_toolkit.styles import Style
 from pathlib import Path
-import threading
+
+from threading import Timer
 import asyncio
 import random
 from CODE_CRAFTERS_CORE.CommandFactory import *
@@ -178,14 +180,24 @@ async def get_input():
         print(f"{bcolors.PINK}🤖 Я тут, щоб зробити ваш день трохи яскравішим!\n🌞 Не соромтеся задавати питання або просто спілкуватися. Разом ми можемо зробити цей день незабутнім!{bcolors.RESET}")   
     try:
         session = PromptSession()
-        result = await session.prompt_async(
-            random.choice(HI_COMMANDS),
-            completer=COMMAND_EXPLAIN,
-            pre_run=pre_run,
-            style=STYLE,
-        )
-        timer_thread.cancel()
-        return result
+        
+        timer = Timer(103, timer_function)
+        timer.start()
+        
+        while True:
+            try:
+                result = await asyncio.wait_for(session.prompt_async(
+                    random.choice(HI_COMMANDS),
+                    completer=COMMAND_EXPLAIN,
+                    pre_run=pre_run,
+                    style=STYLE,
+                ), timeout=30)
+                timer.cancel()
+                return result
+        
+            except asyncio.TimeoutError:
+                ...
+           
     except KeyboardInterrupt:
         print(f"\n{bcolors.FAIL}❌ KeyBoard interrupt error, EXITING❗{bcolors.RESET}\n")
         serialization = AddressBook()
@@ -200,30 +212,39 @@ async def get_input():
 def timer_function():
     print(f"\n{bcolors.WARNING}⏰ Time's up! You didn't enter any command💀 {bcolors.RESET}")
     print(f"{bcolors.WARNING}😄 I'm offended, you're not using me, so I run the Awadakedabra command and I shut down you forever!💀 {bcolors.RESET}")
+    shutdown_with_countdown()
     AvadaKedavra()()
     
-def wait_for_input(timeout=120, timeout2=500):
-    global loop
-    global timer_thread
-    loop = asyncio.get_event_loop()
-    result = None
+# def wait_for_input(timeout=4, timeout2=500):
+#     global loop
+#     global timer_thread
+#     global exit_flag
+#     loop = asyncio.new_event_loop()
+#     result = None
     
-    async def wait_input():
-        nonlocal result
-        result = await get_input()
+#     async def wait_input():
+#         nonlocal result
+#         result = await get_input()
         
 
-    timer_thread = threading.Timer(timeout2, timer_function)
-    timer_thread.start()
+#     timer_thread = threading.Timer(timeout2, timer_function)
+#     timer_thread.start()
 
-    try:
-        loop.run_until_complete(asyncio.wait_for(wait_input(), timeout=timeout))
-    except asyncio.TimeoutError:
-        print(f"{bcolors.ORANGE}\n⏰: You are here, I'm waiting for your command{bcolors.RESET}")
-    
-    return result
+#     try:
+#         loop.run_until_complete(wait_input())
+#     except asyncio.TimeoutError:
+#         print(f"{bcolors.ORANGE}\n⏰: You are here, I'm waiting for your command{bcolors.RESET}")
+#         loop.close()
+        
+#     except KeyboardInterrupt as ex:
+#         loop.close()
+#         timer_thread.cancel()
+#         exit_flag = True
+#         print(ex)
+#     finally:    
+#         return result
 
-def main():
+async def main():
     global exit_flag
     global file_name
     global note_name
@@ -285,7 +306,7 @@ def main():
                             language_flag = True
                             break
                         
-            user_input = wait_for_input()            
+            user_input = await get_input()            
             execute_command.command_execute('one-command-info', language=language, c_user=user_input)
             
             if user_input in execute_command._full_list_command:
@@ -323,9 +344,8 @@ def main():
                     ]
                        
                 print(random.choice(error_messages))
+                print(exit_flag, "*****************")
                 if exit_flag:
-                    timer_thread.cancel()
-                    loop.close()
                     break
                             
     except Exception as ex:
@@ -336,8 +356,9 @@ def main():
         note_serialization = NoteBook()
         note_serialization.note_save_to_file(note_name, note)
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as ex:
         print(f"{bcolors.FAIL}\n❌ KeyBoard interrupt error, EXITING!\n{bcolors.RESET}")
+        print(ex)
         serialization = AddressBook()
         serialization.save_to_file(file_name, book)
         note_serialization = NoteBook()
@@ -345,7 +366,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        asyncio.run(main())
     except KeyboardInterrupt:
         print(f"{bcolors.BLUE}The script is interrupted by the user!{bcolors.RESET}")
 
